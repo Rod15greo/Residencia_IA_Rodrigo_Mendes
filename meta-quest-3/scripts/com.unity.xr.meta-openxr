@@ -1,20 +1,65 @@
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 
 public class PlaneDetection : MonoBehaviour
 {
     private ARPlaneManager arPlaneManager;
+    public Material planeMaterial; // Material a ser aplicado aos planos detectados
+    public Camera arCamera; // Referência à câmera AR
 
     void Start()
     {
         arPlaneManager = GetComponent<ARPlaneManager>();
+        arPlaneManager.planesChanged += OnPlanesChanged;
+    }
+
+    void OnDestroy()
+    {
+        arPlaneManager.planesChanged -= OnPlanesChanged;
+    }
+
+    void OnPlanesChanged(ARPlanesChangedEventArgs args)
+    {
+        foreach (ARPlane plane in args.added)
+        {
+            // Aplicar material aos novos planos detectados
+            plane.GetComponent<Renderer>().material = planeMaterial;
+        }
+
+        // Opcional: lógica para planos atualizados e removidos
+        foreach (ARPlane plane in args.updated)
+        {
+            // Atualize a lógica para planos detectados, se necessário
+        }
+
+        foreach (ARPlane plane in args.removed)
+        {
+            // Lógica para lidar com planos removidos, se necessário
+        }
     }
 
     void Update()
     {
-        if (arPlaneManager.trackables.count > 0)
+        // Verificar toques na tela
+        if (Input.touchCount > 0)
         {
-            // Lógica para interação com planos detectados
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.phase == TouchPhase.Began)
+            {
+                Ray ray = arCamera.ScreenPointToRay(touch.position);
+                if (Physics.Raycast(ray, out RaycastHit hit))
+                {
+                    ARPlane arPlane = hit.transform.GetComponent<ARPlane>();
+                    if (arPlane != null)
+                    {
+                        // Alterar a cor do material do plano quando tocado
+                        Renderer renderer = arPlane.GetComponent<Renderer>();
+                        renderer.material.color = Color.blue;
+                    }
+                }
+            }
         }
     }
 }
