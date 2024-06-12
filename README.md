@@ -1,2 +1,12 @@
-# Residencia_IA_Rodrigo_Mendes
-Esse repositório foi criado com o a intenção de centralizar todos os trabalhos feitos e documentos durante minha Residência em IA
+
+# Equirectangular 360° Image Viewer
+This project is a simple python 360° Image viewer for Equirectangular photography and pictures.
+
+## Use
+
+To use this project
+
+```bash
+  pip install -r requirements.txt
+```
+And then launch EquiView360.py
